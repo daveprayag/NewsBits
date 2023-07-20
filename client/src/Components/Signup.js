@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -136,7 +137,7 @@ function Signup() {
               </div>
               <div className="row">
                 <small>
-                  Already have an account? <a href="#">Login</a>
+                  Already have an account? <a href="/login">Login</a>
                 </small>
               </div>
             </div>

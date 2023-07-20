@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import React from "react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -7,28 +8,38 @@ import "./Login.css";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   async function loginUser(event) {
     event.preventDefault();
-    const response = await fetch("http://localhost:1337/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:1337/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.user) {
-      localStorage.setItem("token", data.user);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
+      if (data.user) {
+        localStorage.setItem("token", data.user);
+        // toast.success("Login successful!");
+        navigate("/");
+      } else {
+        // toast.error("Invalid credentials");
+      }
+    } catch (error) {
+      console.error(error);
+      // toast.error("An error occurred");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -84,12 +95,29 @@ function Login() {
                   </div>
                 </div>
                 <div className="input-group mb-3">
-                  <button className="btn btn-lg btn-dark w-100 fs-6">
-                    Login
-                  </button>
+                  {loading ? (
+                    <button
+                      type="submit"
+                      className="btn btn-lg btn-dark w-100 fs-6"
+                      disabled
+                    >
+                      <span
+                        className="spinner-border spinner-border-sm me-2"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Loading...
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="btn btn-lg btn-dark w-100 fs-6"
+                    >
+                      Login
+                    </button>
+                  )}
                 </div>
               </form>
-              {/* {<Loading />} */}
               <div className="input-group mb-3">
                 <button className="btn btn-lg btn-light w-100 fs-6">
                   <img

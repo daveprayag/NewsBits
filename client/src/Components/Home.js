@@ -1,3 +1,7 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -7,6 +11,7 @@ import jwt_decode from "jwt-decode";
 function Home() {
   var [date, setDate] = useState(new Date());
   const [news, setNews] = useState([]);
+  const [filteredNews, setFilteredNews] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,7 +53,7 @@ function Home() {
         const response = await fetch("http://localhost:1337/api/news");
         const data = await response.json();
         setNews(data);
-        console.log(data);
+        setFilteredNews(data);
       } catch (error) {
         console.error(error);
       }
@@ -61,6 +66,17 @@ function Home() {
   function clearToken() {
     localStorage.removeItem("token");
   }
+
+  const filterNews = (newsCategory) => {
+    const updatedNews = news.filter((curElem) => {
+      return curElem.Category === newsCategory;
+    });
+    setFilteredNews(updatedNews);
+  };
+
+  const resetFilter = () => {
+    setFilteredNews(news);
+  };
 
   return (
     <>
@@ -100,28 +116,63 @@ function Home() {
 
         <div className="nav-scroller py-1 mb-2">
           <nav className="nav d-flex justify-content-between">
-            <a className="p-2 link-secondary" href="#">
+            <a className="p-2 link-secondary" href="#" onClick={resetFilter}>
+              All
+            </a>
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("WORLD")}
+            >
               World
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("NATION")}
+            >
               Nation
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("TECHNOLOGY")}
+            >
               Technology
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("ENTERTAINMENT")}
+            >
               Entertainment
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("SPORTS")}
+            >
               Sports
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("BUSINESS")}
+            >
               Business
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("SCIENCE")}
+            >
               Science
             </a>
-            <a className="p-2 link-secondary" href="#">
+            <a
+              className="p-2 link-secondary"
+              href="#"
+              onClick={() => filterNews("HEALTH")}
+            >
               Health
             </a>
           </nav>
@@ -129,7 +180,7 @@ function Home() {
       </div>
 
       <main className="container">
-        <div className="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+        {/* <div className="p-4 p-md-5 mb-4 text-white rounded bg-dark">
           <div className="col-md-6 px-0">
             <h1 className="display-4 fst-italic">
               Title of a longer featured blog post
@@ -145,14 +196,30 @@ function Home() {
               </a>
             </p>
           </div>
-        </div>
+        </div> */}
 
         <div className="row mb-2">
-          {news.map((item) => (
+          {filteredNews.map((item) => (
             <div key={item._id} className="col-md-6">
-              <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+              <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative card-hover">
                 <div className="col p-4 d-flex flex-column position-static">
-                  <strong className="d-inline-block mb-2 text-primary">
+                  <strong
+                    className={`d-inline-block mb-2 text-${
+                      item.Category === "TECHNOLOGY"
+                        ? "primary"
+                        : item.Category === "NATION"
+                        ? "success"
+                        : item.Category === "BUSINESS"
+                        ? "danger"
+                        : item.Category === "WORLD"
+                        ? "secondary"
+                        : item.Category === "ENTERTAINMENT"
+                        ? "warning"
+                        : item.Category === "HEALTH"
+                        ? "info"
+                        : "dark"
+                    }`}
+                  >
                     {item.Category}
                   </strong>
                   <h3 className="mb-0 news-title">{item.Title}</h3>
@@ -164,15 +231,16 @@ function Home() {
                     href={item.Link}
                     className="stretched-link"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     Continue reading
                   </a>
                 </div>
-                <div className="col-auto d-none d-lg-block">
+                <div className="col-auto d-none d-lg-block align-self-center px-2">
                   <img
-                    className="bd-placeholder-img"
+                    className="bd-placeholder-img rounded"
                     width="200"
-                    height="250"
+                    height="150"
                     src={item.Image}
                     alt="Thumbnail"
                   />
@@ -181,42 +249,6 @@ function Home() {
             </div>
           ))}
         </div>
-        {/* <div className="col-md-6">
-            <div className="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-              <div className="col p-4 d-flex flex-column position-static">
-                <strong className="d-inline-block mb-2 text-success">
-                  Design
-                </strong>
-                <h3 className="mb-0">Post title</h3>
-                <div className="mb-1 text-muted">Nov 11</div>
-                <p className="mb-auto">
-                  This is a wider card with supporting text below as a natural
-                  lead-in to additional content.
-                </p>
-                <a href="#" className="stretched-link">
-                  Continue reading
-                </a>
-              </div>
-              <div className="col-auto d-none d-lg-block">
-                <svg
-                  className="bd-placeholder-img"
-                  width="200"
-                  height="250"
-                  xmlns="http://www.w3.org/2000/svg"
-                  role="img"
-                  aria-label="Placeholder: Thumbnail"
-                  preserveAspectRatio="xMidYMid slice"
-                  focusable="false"
-                >
-                  <title>Placeholder</title>
-                  <rect width="100%" height="100%" fill="#55595c" />
-                  <text x="50%" y="50%" fill="#eceeef" dy=".3em">
-                    Thumbnail
-                  </text>
-                </svg>
-              </div>
-            </div>
-          </div> */}
       </main>
 
       <footer className="blog-footer">

@@ -97,8 +97,20 @@ app.get("/api/news", async (req, res) => {
     res.json(news);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "An error occured" });
   }
+});
+
+app.get("/api/news", (req, res) => {
+  const category = req.query.category;
+
+  News.find({ Category: category })
+    .then((news) => {
+      res.json(news);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "An error occurred" });
+    });
 });
 
 app.listen(PORT, () => console.log("Server running on port " + PORT));
